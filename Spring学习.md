@@ -1,3 +1,5 @@
+视频地址:[SSM教程](https://www.bilibili.com/video/BV1Bg4y1q7q2?p=40&t=486)
+
 # 2020/9/2
 
 ##    1.Spring的重点配置
@@ -75,7 +77,7 @@ Spring是轻代码而重配置的框架,配置比较繁重,影响开发效率,�
 
 原始注解:主要代替<bean>配置
 
-<img src="E:\学习笔记\图片\image-20200920193533352.png" alt="image-20200920193533352 " style="zoom:60%;" />
+<img src="E:\学习笔记\Learning\图片\image-20200920193533352.png" alt="image-20200920193533352 " style="zoom:60%;" />
 
 ### 3.2 Spring的新注解
 
@@ -86,7 +88,7 @@ Spring是轻代码而重配置的框架,配置比较繁重,影响开发效率,�
 + 组件扫描的配置:<context:componet-scan>
 + 引入其他文件:<import>
 
-新注解:<img src="E:\学习笔记\图片\image-20200920204929289.png" alt="image-20200920204929289" style="zoom:70%;" />
+新注解:<img src="E:\学习笔记\Learning\图片\image-20200920204929289.png" alt="image-20200920204929289" style="zoom:70%;" />
 
 
 
@@ -121,7 +123,7 @@ AOP--**面向切面编程**,通过预编译技术和运行期**动态代理**实
 
 
 
-![image-20200921164616028](E:\学习笔记\图片\image-20200921164616028.png)
+![image-20200921164616028](E:\学习笔记\Learning\图片\image-20200921164616028.png)
 
 
 
