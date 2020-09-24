@@ -16,4 +16,5 @@
 
 1. 更新全部文件：git add .
 2. 输入更新说明：git commit -m '更新说明'
-3. push到远程master分支上：git push （将本地的代码同步到线上的分支上）
+3. push到远程master分支上：git push （将本地的代码同步到线上的分\
+4. 用户名:zzsanshi
