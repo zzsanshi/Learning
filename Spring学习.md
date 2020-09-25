@@ -125,6 +125,104 @@ AOP--**面向切面编程**,通过预编译技术和运行期**动态代理**实
 
 ![image-20200921164616028](E:\学习笔记\Learning\图片\image-20200921164616028.png)
 
+# 2020/9/25
+
+### 2.2 JDK的动态代理
+
+```java
+         //目标对象
+        final Target target = new Target();
+        Advice advice = new Advice();//获得增强对象
+        //返回值为动态生成的代理对象
+        TargetInterface proxy = (TargetInterface) Proxy.newProxyInstance(
+                target.getClass().getClassLoader(),//目标对象类加载器
+                target.getClass().getInterfaces(), //目标对象相同的接口字节码对象数组
+                new InvocationHandler() {
+                    //调用代理对象的任何方法,实质执行的都是invoke方法
+                    @Override
+                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                        advice.before();//前置增强
+                        method.invoke(target, args);//执行目标方法
+                        advice.afterReturning();//后置增强
+                        return null;
+                    }
+                }//
+        );
+        //调用代理对象的方法
+        proxy.save();
+```
+
+### 2.3 cglib的动态代理
+
+```java
+  //目标对象
+        final Target target=new Target();
+        //获得增强对象
+        final Advice advice=new Advice();
+        //返回值就是动态生成的代理对象 基于cglib
+        //1.创建增强器
+        Enhancer enhancer=new Enhancer();
+
+        //2.设置父类(目标)
+
+        enhancer.setSuperclass(Target.class);
+        //3.设置回调
+        enhancer.setCallback(new MethodInterceptor() {
+            @Override
+            public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+               advice.before();//执行前置增强
+               Object invoke=method.invoke(target,args);//目标
+                advice.afterReturning();//后置
+                return null;
+            }
+        });
+        //4.生成代理对象
+      Target proxy=(Target)enhancer.create();
+       proxy.save();
+
+```
+
+### 2.4 AOP相关概念
+
++ Target(目标对象):代理的目标对象
++ Proxy(代理对象):一个类被AOP植入增强后,就产生一个结果代理类
++ JoinPoint(连接点):所谓连接点是指那些被拦截到的点.在Spring中,这些点指方法,因为Spring只支持方法类型的连接点--**可以被增强的方法叫做连接点**
++ **Pointcut**(切入点):所谓切入点是指我们要对哪些Joinpoint进行拦截的定义--**被增强的连接点叫做切入点**
++ **Advice(**通知/增强):所谓通知是指拦截到Joinpoint之后所要做的事情就是通知--
++ **Aspect**(切面):是切入点和通知(引介)的结合--**切点+通知**
++ Weaving(织入):是指把增强应用到目标对象来创建的代理对象的过程.spring采用动态代理织入,而AspectJ采用编译期织入和类装载期织入-**-将切点和通知/增强结合的过程就是织入**,即配置
+
+### 2.5 AOP开发明确的事项
+
+1. 需要编写的内容
+
+   1. 编写业务核心代码(目标类的目标方法)--被增强的方法
+
+   + 编写切面类,切面类中有通知(增强方法通知)
+   + 在配置文件中,配置织入关系,即将哪些通知与哪些连接点进行结合
+
+2. AOP技术实现的内容
+
+Spring会监控切入点方法的执行.一旦**监控**到切入点方法被运行,使用代理机制,动态**创建**目标对象的代理对象,根据通知类别,在代理的对应位置,将通知对应的功能**织入**,完成完整的代码逻辑运行.
+
+3. AOP底层使用哪种代理方式
+   - 有接口:使用JDK
+   - 没有接口:使用cglib
+
+### 2.6 知识要点
+
++ aop:面向切面的编程
++ aop底层实现:基于JDK和基于Cglib的动态代理
++ aop的重点概念:
+  + Pointcut切点:被增强的方法
+  + Advice(通知/增强):封装增强业务逻辑的方法
+  + Aspect(切面):切点+通知
+  + Weaving(织入):将切点和通知结合的过程
++ 开发明确事项"
+  + 谁是切点(切点表达式配置)
+  + 谁是通知(切面类中的增强方法)
+  + 将切点和通知进行织入配置
+
 
 
 
