@@ -103,6 +103,21 @@ Spring是轻代码而重配置的框架,配置比较繁重,影响开发效率,�
 4. 使用@Autowired注入需要测试的对象
 5. 创建测试方法进行测试
 
+```java
+@RunWith(.class)
+@ContextConfigura(".xml")
+public void test(){
+   @Autowired
+    private int num;
+    @Test
+    public void Test(){
+        ...
+    }
+}
+```
+
+
+
 # 6.Spring的AOP
 
 AOP--**面向切面编程**,通过预编译技术和运行期**动态代理**实现程序功能的统一维护的一种技术.
@@ -299,10 +314,120 @@ Spring会监控切入点方法的执行.一旦**监控**到切入点方法被运
 
 ## 8.2 注解配置AOP详解
 
-1. 注解通知的类型
+注解通知的类型
 
-   ![image-20200926174104556](E:\学习笔记\Learning\图片\image-20200926174104556.png)
+![image-20200926174104556](E:\学习笔记\Learning\图片\image-20200926174104556.png)
 
 ## 8.3 切点表达式的抽取
 
 同xml配置aop一样,我们可以将切点表达式抽取.抽取方式是在切面内定义方法,在该方法上使用@Pointcut注解定义切点表达式,然后在增强表达式中进行引用.
+
+# 9.Spring JdbcTemplate基本使用
+
+## 9.1概述
+
+他是spring框架中提供的一个对象,是对原始Jdbc API对象的简单封装.Spring框架为我们提供了很多的操作模板类.例如,操作关系型数据的JdbcTemplate和HibernateTemplate.操作nosql数据库的RedisTemplate,操作消息队列的JmsTemplate等等.
+
+## 9.2 JdbcTemplate开发步骤
+
+1. 导入spring-jdbc和spring-tx坐标
+2. 创建数据库和实体
+3. 创建JdbcTemplate对象
+4. 执行数据库操作
+
++ 基本数据库操作
+
+```java
+        //创建数据源对象
+        ComboPooledDataSource dataSource=new ComboPooledDataSource();
+        //dataSource.setDriverClass("com.sqlite.jdbc.Driver");
+        dataSource.setJdbcUrl("jdbc:sqlite:D:\\Database\\username.db");
+        //创建模板对象
+        JdbcTemplate jdbcTemplate=new JdbcTemplate();
+        jdbcTemplate.setDataSource(dataSource);//设置数据源对象,告诉数据位置
+        int row=jdbcTemplate.update("insert into account values(?,?)"," Tom",4);//更新,插入数据,返回行数
+```
+
++ Spring产生JdbcTemnplate对象
+
+可以将JdbcTemplate的创建权交给Spring,将数据源Datasource的创建权也交给Spring.在Spring容器中将数据源DataSource注入到JdbcTemplate模板对象中.
+
+```java
+//xml配置
+    <!--数据源对象-->
+    <bean id="datasource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="jdbcUrl" value="jdbc:sqlite:D:\Database\username.db"/>
+        //<property name="jdbcUrl" value="${jdbc.url}"/>//配置文件形式
+    </bean>
+    <!--Jdbc模板对象-->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="datasource"/>
+    </bean>
+```
+
+```java
+//Ioc
+        //控制反转
+        ApplicationContext app = new ClassPathXmlApplicationContext("DataSource.xml");
+        JdbcTemplate jdbcTemplate = app.getBean(JdbcTemplate.class);
+        //配置
+        int row = jdbcTemplate.update("insert into account values(?,?)", " T1", 4);
+```
+
+# 2020/9/27
+
+## 9.3 Jdbc基本操作
+
+```java
+        jdbcTemplate.update("insert into account values(?,?)", " T1", 4);//插入
+        jdbcTemplate.update("update account set money=? where name=?", 2, "who");//更新操作
+        jdbcTemplate.update("delete from account where name=?", "T1");//删除操作
+```
+
+
+
+```java
+        //查询全部
+        List<Account> accountList= jdbcTemplate.query("select * from account",new                         BeanPropertyRowMapper<Account>(Account.class));
+        
+        //查询单个对象
+        Account account= jdbcTemplate.queryForObject("select * from account where name=?",new BeanPropertyRowMapper<Account>(Account.class),"Tom");
+        
+       //聚合查询
+       Long count=jdbcTemplate.queryForObject("select count(*) from account",Long.class);
+       
+```
+
+# 10. 事务控制
+
+## 10.1 编程式事务控制
+
++ PlatformTransactionManager--接口只定义行为
+
+spring的事务管理器,里面提供了常用的操作事务的方法
+
+![image-20200927202131183](E:\学习笔记\Learning\图片\image-20200927202131183.png)
+
++ TransactionDedfinition
+
+事务的定义信息对象
+
+![image-20200927202258632](E:\学习笔记\Learning\图片\image-20200927202258632.png)
+
++ TransactionStatus--被动安装对象信息
+
+提供事务具体的运行状态
+
+![image-20200927202401195](E:\学习笔记\Learning\图片\image-20200927202401195.png)
+
+## 10.2 基于XML的声名式事务控制
+
+spring的声名式事务顾名思义就是采用声名的方式来处理事务.所谓声名,就是配置文件中声名,用在spring配置文件中声名式的处理事务来代替代码式的处理事务.
+
+**作用:**
+
++ 事务管理不侵入开发的组件.具体来说,业务逻辑对象就不会到正在事务管理之中,事实上也应该如此,因为事务管理是属于**系统**层面的服务,而不是业务逻辑的一部分,如果想要改变事务管理策划的话,也只需要在定义文件中重新配置即可.--**解耦性**
++ 在不需要事务管理的时候,只要在设定文件上修改一下,即可移去事务管理服务,无需改变代码重新编译,这样维护起来极其方便.
+
+**ps:**spring声明式事务控制底层就是AOP
+
