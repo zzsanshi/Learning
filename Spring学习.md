@@ -467,8 +467,8 @@ spring的声名式事务顾名思义就是采用声名的方式来处理事务.�
 
 **配置要点:**
 
-+ 平台事务管理器配置
-+ 事务通知的配置
++ 平台事务管理器配置(xml方法)
++ 事务通知的配置(xml或者@Transactional注解配置)
 + 事务aop织入的配置
 
 ## 10.4基于注解的声明式事务控制
@@ -483,3 +483,91 @@ spring的声名式事务顾名思义就是采用声名的方式来处理事务.�
     <tx:annotation-driven transaction-manager="transactionManager"/>
 ```
 
+**解析:**
+
+1. 使用@Transactional在需要进行事务控制的类或是方法上修饰,注解可用的属性同XML配置方式,例如隔离级别,传播行为等.
+2. 注解使用在类上,那么该类下的所有方法都使用同一套注解参数配置.
+3. 使用在方法上,不同的方法可以采用不同的事务参数配置
+4. Xml配置文件中要开启事务的注解驱动<tx:annotation-driven/>
+
+# 2020/9/28
+
+# 11. Spring集成Web环境
+
+## 11.1 ApplicationContext应用上下文获取方式
+
++ **问题:**获取太多次,影响性能.
+
++ **解决:**在web项目中,可以使用ServletContextLinstener监听Web应用的启动,可以在Web启动时,就加载Spring的配置文件,创建应用上下文对象ApplicationContext,在将其存储到最大域servletContext域中,这样就可以在任意位置从域中获得应用上下文Application对象了.
+
++ 代码实例
+
+  + 监听器 listenser
+
+    ```java
+    public class ContextLoaderListener implements ServletContextListener {
+    
+        @Override
+        public void contextInitialized(ServletContextEvent servletContextEvent) {
+            ApplicationContext app = new ClassPathXmlApplicationContext("application-0928.xml");
+    
+            //将Spring的应用上下文对象存储到最大的域--ServerContext中
+            ServletContext servletContext = servletContextEvent.getServletContext();
+            servletContext.setAttribute("app", app);
+        }
+    
+        @Override
+        public void contextDestroyed(ServletContextEvent servletContextEvent) {
+    
+        }
+    }
+    ```
+
+  + web.xml配置
+
+    ```java
+    <!--配置监听器-->
+        <listener>
+            <listener-class>LearningCode0928.listener.ContextLoaderListener</listener-class>
+        </listener>
+    ```
+
+  + 获取配置信息
+
+    ```java
+            //ServletContext servletContext= req.getServletContext();第一种
+            ServletContext servletContext=this.getServletContext();//第二种
+            ApplicationContext app= (ApplicationContext) servletContext.getAttribute("app");
+            UserService userService=app.getBean(UserService.class);
+    ```
+
+## 11.2自定义监听器
+
++ 监听器 listenser
+
+  ```java
+   @Override
+      public void contextInitialized(ServletContextEvent servletContextEvent) {
+          //读取web.xml中的全全局参数
+          ServletContext servletContext = servletContextEvent.getServletContext();
+  
+          String contextConfigLocation=servletContext.getInitParameter("contextConfigLocation");
+          ApplicationContext app = new ClassPathXmlApplicationContext("contextConfigLocation");
+  ```
+
++ web.xml
+
+  ```java
+   <!--    全局初始化参数-->
+      <context-param>
+          <param-name>contextConfigLocation</param-name>
+          <param-value>application-0928.xml</param-value>
+      </context-param>
+  ```
+
+## 11.3 Spring提供获取应用上下文的工具
+
+Spring提供了一个监听器ContextLoaderListener对上述功能进行封装,该监听器内部加载Spring配置文件,创建应用上下文对象,并存储到ServletContext域中,提供了一个客户端工具WebApplicationUtils供使用者获得应用上下文对象.
+
+1. 在web.xml中配置ContextLoaderListener监听器(导入spring-web坐标)
+2. 使用WebApplicationContextUtils获得应用上下文对象ApplicationContext
