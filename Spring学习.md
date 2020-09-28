@@ -228,7 +228,7 @@ Spring会监控切入点方法的执行.一旦**监控**到切入点方法被运
   + Advice(通知/增强):封装增强业务逻辑的方法
   + Aspect(切面):切点+通知
   + Weaving(织入):将切点和通知结合的过程
-+ 开发明确事项"
++ 开发明确事项:
   + 谁是切点(切点表达式配置)
   + 谁是通知(切面类中的增强方法)
   + 将切点和通知进行织入配置
@@ -430,4 +430,56 @@ spring的声名式事务顾名思义就是采用声名的方式来处理事务.�
 + 在不需要事务管理的时候,只要在设定文件上修改一下,即可移去事务管理服务,无需改变代码重新编译,这样维护起来极其方便.
 
 **ps:**spring声明式事务控制底层就是AOP
+
+## 10.3 基于XML的声名式事务控制的实现
+
+**明确事项:**
+
++ 谁是切点
++ 谁是通知
++ 配置切面
+
+```java
+<!--配置平台事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="datasource"></property>
+    </bean>
+    <!--通知 事务的增强-->
+<tx:advice id="txAdvice" transaction-manager="transactionManager">
+    <tx:attributes>
+        <tx:method name="*"/>
+    </tx:attributes>
+</tx:advice>
+<!--配置事务AOP的织入-->
+    <aop:config>
+        <aop:advisor advice-ref="txAdvice" pointcut="execution(* LearningCode0927.service.impl.*.*(..))"></aop:advisor>
+    </aop:config>
+```
+
+**事务参数配置:**
+
++ <tx:method>
+  + name:切点方法名称
+  + isolation:事务的隔离级别
+  + propogation:事务的传播行为
+  + timeout:超时时间
+  + read-only:是否只读
+
+**配置要点:**
+
++ 平台事务管理器配置
++ 事务通知的配置
++ 事务aop织入的配置
+
+## 10.4基于注解的声明式事务控制
+
+```java
+<!--配置平台事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="datasource"></property>
+    </bean>
+
+<!--事务的注解驱动-->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+```
 
