@@ -159,7 +159,7 @@ JSP:动态网页
 
 1. 请求行
 
-   ​	请求方式 请求url 请求协议/版本:GET/*.html HTTP/1.1
+   ​	请求方式 请求url 请求协议/版本: GET/*.html HTTP/1.1
 
    + 请求方式
      + GET:请求参数在请求行中,在url后;url长度**有限制**;**不安全**
@@ -191,7 +191,99 @@ JSP:动态网页
 
 4. 请求体(正文):封装POST请求消息的请求参数的
 
-   
 
 + **响应消息数据格式**
+
+# 2020/10/13
+
+# 3.Request
+
+## 3.1 request和response原理
+
+request中封装请求消息数据;
+
+response对象设置响应消息数据.
+
+1. request和response是由服务器创建的
+2. request获取请求消息,response设置响应消息
+
+## 3.2 request对象的继承体系结构
+
+**ServletRequest**: --接口
+
+ 	|继承
+
+**HttpServletRequest**: --接口
+
+​	 |实现
+
+org.apache.catalina.connector.RequestFacade
+
+## 3.3 Request功能
+
+1. **获取请求消息数据**
+
+   + 获取请求行数据
+
+     + 获取请求方式: GET--String getMethod()
+     + **获取虚拟目录**:String getContextPath()
+     + 获取Servlet路径:String getServletPath()
+     + 获取get方式的请求参数:String getQueryString()
+     + **获取请求的URI**:String getRequestURI()--短一些
+     + 获取协议及版本:Strng getProtocol()
+     + 获取客户机IP地址:String getRemoteAddr()
+
+   + 获取请求头数据
+
+     + String getHeader(String name):通过请求头名称,获取请求头的值
+     + Enumeration<String> getHeaderNames():获取所有请求头的名称
+
+   + 获取请求体数据--只有POST请求方式,才有请求体,在请求体中封装了POST请求的请求参数
+
+     + 步骤:1.获取流对象;getReader()--获取字符输入流,只能操作字符数据
+
+       ​								getInputStream--获取字节输入流,可以操作所有数据类型
+
+         		2.再从流对象中获取数据
+
+**URL和URI的区别:**
+
++ URL:统一资源定位符
+
++ URI:统一资源标识符
+
+2. **其他功能**
+
+   + 获取请求参数通用方式:
+
+     + String getParameter(String name):根据参数名称获取参数值
+     + String[ ] getParameterValues(String name):根据参数名称获取参数值的数组
+     + Enumeration<String>  getParameterNames():获取所有参数名称
+     + Map<String,String[]> getParameterMap():获取所有参数的map集合
+
+     **中文乱码问题:**post方式:获取参数前,设置流的编码,UTF-8
+
+   + 请求转发:一种在服务器内部的资源跳转方式
+
+     + 步骤:1.通过request对象获取请求转发器对象
+
+       ​		 2.使用RequestDispatcher对象来进行转发
+
+     + 特点:
+       +  浏览器地址栏没有变化
+       + 只能转发到服务器内部的资源中
+       + 转发是一次请求
+
+   + 共享数据:
+
+     + 域对象:一个有作用范围的对象,可以在范围内共享数据
+     + request域的范围:代表一次请求的范围,一般用于请求转发的多个资源中共享数据
+     + 方法:
+       1. void setAttribute(String name,Object obj):存储数据
+       2. Object getAttitude(String name):通过键获取值
+       3.  void removeAttribute(String name):通过键移除键值对
+
+   + 获取ServletContext:
+
+     Servletcontext getServletContext()
 
