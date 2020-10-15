@@ -287,3 +287,26 @@ org.apache.catalina.connector.RequestFacade
 
      Servletcontext getServletContext()
 
+**JavaBean:**标准的Java类
+
+**要求:**
+
+1. 类必须被public修饰
+2. 必须提供空参的构造器
+3. 成员变量必须使用private修饰
+4. 提供公共setter和getter方法
+
+**功能:**封装数据
+
+**概念:**
+
+成员变量:
+
+属性:setter和getter方法截取之后的产物---setHe--HE就是属性
+
+**BeanUtils的方法**
+
+1. setProperty():设置**属性值**
+2. getProperty():获取**属性值**
+3. **populate:**封装数据
+
