@@ -1,3 +1,5 @@
+视频地址: [MVC](https://www.bilibili.com/video/BV1Bg4y1q7q2?p=109)
+
 # 2020/9/28
 
 # 1.SpringMVC简介
@@ -165,3 +167,75 @@ SpringMVC默认已经提供了一些常用的类型转换器
 
    + value:指定cookie的名称
    + required:是否必须携带此cookie
+
+## 3.7 文件上传
+
+1. **文件上传三要素**
+   1. 表单项type="file"
+   2. 表单的提交方式是post
+   3. 表单的enctype属性是多部份表单格式,及enctype="multipart/form-data"
+
+![image-20201118104608326](E:\学习笔记\Learning\图片\image-20201118104608326.png)
+
+2. **上传原理**
+
+   + 当form表单修改为多部份表单时,request.getparameter()将失效
+
+   + enctype="application/x-www-form-urlencoded"时,form表单的正文内容格式是:
+
+     key=value&key=value
+
+   + 当form表单的enctype取值为Mutil/form-data时,请求正文内容就变成多部份形式:
+
+     ![image-20201118105255662](E:\学习笔记\Learning\图片\image-20201118105255662.png)
+
+3. 上传步骤
+
+   1. 导入fileupload和io坐标
+
+   2. 配置文件上传解析器
+
+      ![image-20201118105856677](E:\学习笔记\Learning\图片\image-20201118105856677.png)
+
+   3. 编写文件上传代码
+
+# 2020/11/18
+
+# 4. SpringMVC拦截器
+
+## 4.1 拦截器(interceptor)作用
+
+​	类似于Servlet开发中的过滤器Filter,用于对处理器进行预处理和后处理
+
+​	将拦截器按照一定的顺序连结成一条链,这条链成为**拦截器链**.在访问被拦截的方法或字段时,拦截器链中的拦截器就会按其之前定义的顺序被调用.拦截器也是AOP思想的具体实现.
+
+## 4.2 拦截器与过滤器的区别
+
+![image-20201118203340509](E:\学习笔记\Learning\图片\image-20201118203340509.png)
+
+## 4.3 快速入门
+
+1.  创建拦截器类实现HandlerInterceptoru接口
+2. 创建拦截器
+3. 测试拦截器的拦截效果
+
+## 4.4 总结
+
+![image-20201118205638048](E:\学习笔记\Learning\图片\image-20201118205638048.png)
+
+# 5. SpringMVC异常处理
+
+## 5.1 异常处理思路
+
+​	系统中异常包括两类:预期异常和运行时异常,前者通过捕获异常从而获取异常信息,后者主要通过规范代码开发,测试等手段减少运行时异常的发生.
+
+​	由SpringMVC前端控制器交由异常处理器处理.
+
+## 5.2 异常处理两种方式
+
+1. 使用SpringMVC提供的简单异常处理器SimpleMappingExceptionResolver
+
+   ![image-20201118212527215](E:\学习笔记\Learning\图片\image-20201118212527215.png)
+
+2. 使用Spring的异常处理接口HandlerExceptionResolver**自定义**自己的异常处理器
+
