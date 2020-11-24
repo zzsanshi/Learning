@@ -12,6 +12,8 @@
 
 ![image-20201120201245549](E:\学习笔记\Learning\图片\image-20201120201245549.png)
 
+# 2020/11/23
+
 ## 1.3 快速入门
 
 **开发步骤**:
@@ -77,3 +79,89 @@
 3. SqlSession会话对象
 
    ![image-20201123204005658](E:\学习笔记\Learning\图片\image-20201123204005658.png)
+
+# 2020/11/24
+
+# 2. MyBatis的Dao层实现
+
+## 2.1传统方式--手动实现
+
+​		定义接口层
+
+```java
+        InputStream resourceAsStream = Resources.getResourceAsStream("sqlMapConfig.xml");
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(resourceAsStream);
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        List<User> userList = sqlSession.selectList("userMapper.findAll");
+        return userList;
+```
+
+
+
+## 2.2 代理开发方式
+
+### 1.代理开发方式介绍
+
+![image-20201124103228101](E:\学习笔记\Learning\图片\image-20201124103228101.png)
+
+### 2.编写Mapper接口
+
+![image-20201124103837872](E:\学习笔记\Learning\图片\image-20201124103837872.png)
+
+```java
+		InputStream resourceAsStream = Resources.getResourceAsStream("sqlMapConfig.xml");
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(resourceAsStream);
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+   **** UserMapper mapper = sqlSession.getMapper(UserMapper.class);****
+        List<User> all = mapper.findAll();
+```
+
+# 3.MyBatis映射文件深入
+
+## 3.1 动态sql语句
+
+### 1. < if >
+
+![image-20201124190029939](E:\学习笔记\Learning\图片\image-20201124190029939.png)
+
+### 2.< foreach >
+
+![image-20201124191051395](E:\学习笔记\Learning\图片\image-20201124191051395.png)
+
+## 3.2 Sql片段的抽取
+
+![image-20201124191830667](E:\学习笔记\Learning\图片\image-20201124191830667.png)
+
+# 4.核心配置文件深入
+
+## 4 .1 typeHandlers标签
+
+![image-20201124192411188](E:\学习笔记\Learning\图片\image-20201124192411188.png)
+
+![image-20201124192704490](E:\学习笔记\Learning\图片\image-20201124192704490.png)
+
+## 4.2 plugins标签
+
+![image-20201124200057850](E:\学习笔记\Learning\图片\image-20201124200057850.png)
+
+# 5.多表操作
+
+1VS1,1VSn,nVSn
+
+## 5.1 一对一查询
+
+### 
+
+![image-20201124203048557](E:\学习笔记\Learning\图片\image-20201124203048557.png)
+
+## 5.2 一对多查询
+
+![image-20201124210209943](E:\学习笔记\Learning\图片\image-20201124210209943.png)
+
+## 5.3 多对多查询
+
+![image-20201124210152308](E:\学习笔记\Learning\图片\image-20201124210152308.png)
+
+## 5.4 总结
+
+![image-20201124211227111](E:\学习笔记\Learning\图片\image-20201124211227111.png)
